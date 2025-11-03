@@ -1,11 +1,17 @@
 <script setup lang="ts">
-import HomeView from './views/HomeView.vue'
+import { RouterView } from 'vue-router'
+import GlobalNavbar from './components/GlobalNavbar.vue'
 </script>
 
 <template>
-  <HomeView />
+  <div class="app-container">
+    <GlobalNavbar />
+    <RouterView />
+  </div>
 </template>
 
 <style scoped>
-/* App-specific styles can be added here */
+.app-container {
+  min-height: 100vh;
+}
 </style>

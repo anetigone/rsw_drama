@@ -1,6 +1,5 @@
 <template>
   <div class="home-view">
-    <GlobalNavbar />
     <HeroSection />
     <RegionSection />
     <ClassicsSection />
@@ -12,7 +11,6 @@
 </template>
 
 <script setup lang="ts">
-import GlobalNavbar from '../components/GlobalNavbar.vue'
 import HeroSection from '../components/HeroSection.vue'
 import RegionSection from '../components/RegionSection.vue'
 import ClassicsSection from '../components/ClassicsSection.vue'
