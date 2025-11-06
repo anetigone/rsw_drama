@@ -480,7 +480,7 @@ const closeSearchPanel = () => {
 }
 
 /* 响应式设计 */
-@media (max-width: 768px) {
+@media (max-width: 1000px) {
   .desktop-only {
     display: none;
   }
