@@ -4,6 +4,9 @@ import HomeView from '../views/HomeView.vue'
 const routes = [
   {
     path: '/',
+    meta: {
+      title: 'Home'
+    },
     name: 'Home',
     component: HomeView
   }
