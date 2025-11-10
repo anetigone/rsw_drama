@@ -26,7 +26,13 @@
           }"
           @click="handleActivityClick(activity)"
         >
-          <div class="activity-overlay">
+          <div class="activity-overlay" 
+            :style="{ 
+              backgroundImage: `url('/images/heroSection/1.jpg')`,
+              backgroundSize: 'cover',
+              backgroundPosition: 'center'
+            }"
+          >
             <div class="activity-content">
               <h1 class="hero-title">西南话剧图鉴</h1>
               <p class="hero-subtitle">A Guide to Southwestern Chinese Drama</p>
@@ -44,7 +50,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { ref } from 'vue'
 import { ArrowUp, ArrowDown } from '@element-plus/icons-vue'
 
 interface Activity {
@@ -123,11 +129,11 @@ const handleSlideChange = (index: number) => {
 .hero-section {
   position: relative;
   width: 100%;
-  max-width: 1200px;
+  max-width: 1400px;
   margin: 0 auto;
   overflow: hidden;
   /* PC端高度：屏幕可视区的40%-55% */
-  height: 45vh;
+  height: 65vh;
   transition: height 0.5s ease;
 }
 
@@ -209,14 +215,15 @@ const handleSlideChange = (index: number) => {
 }
 
 .hero-title {
+  font-family: RuiYiSong;
   font-size: 48px;
-  font-weight: bold;
   margin-bottom: 10px;
   letter-spacing: 3px;
   text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
 }
 
 .hero-subtitle {
+  font-family: RuiYiSong;
   font-size: 20px;
   margin-bottom: 30px;
   letter-spacing: 1px;

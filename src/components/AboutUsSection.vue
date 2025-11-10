@@ -19,10 +19,14 @@
         
         <div class="about-contact">
           <div class="qrcode-container">
-            <div class="qrcode-placeholder">
-              <span class="qrcode-text">公众号二维码</span>
+            <h4 class="official-account-title">公众号</h4>
+            <p class="scan-hint">扫描下方二维码，关注公众号</p>
+            <div class="qrcode-image">
+              <!-- 这里使用一个占位图，实际项目中应替换为真实的二维码图片 -->
+              <div class="qrcode-placeholder">
+                <span class="qrcode-placeholder-text">二维码图片</span>
+              </div>
             </div>
-            <p class="qrcode-hint">扫描下方二维码，关注公众号</p>
           </div>
         </div>
       </div>
@@ -47,6 +51,7 @@
 }
 
 .section-title {
+  font-family: WenYueXHGuYaSong;
   font-size: 18px;
   color: #666;
   text-align: center;
@@ -56,6 +61,7 @@
 }
 
 .section-subtitle {
+  font-family: WenYueXHGuYaSong;
   font-size: 36px;
   color: #1a1a1a;
   text-align: center;
@@ -66,7 +72,7 @@
 
 .about-content {
   display: grid;
-  grid-template-columns: 2fr 1fr;
+  grid-template-columns: 6fr 4fr;
   gap: 40px;
   align-items: start;
 }
@@ -76,6 +82,7 @@
 }
 
 .about-heading {
+  font-family: RuiYiSong;
   font-size: 24px;
   color: #1a1a1a;
   margin-bottom: 25px;
@@ -97,30 +104,46 @@
 
 .qrcode-container {
   text-align: center;
+  border: 2px solid #000;
+  padding: 30px 20px;
+  width: 100%;
+  max-width: 280px;
+}
+
+.official-account-title {
+  font-family: RuiYiSong;
+  font-size: 20px;
+  color: #000;
+  margin-bottom: 20px;
+  font-weight: bold;
+}
+
+.scan-hint {
+  font-size: 14px;
+  color: #333;
+  line-height: 1.5;
+  margin-bottom: 20px;
+}
+
+.qrcode-image {
+  display: flex;
+  justify-content: center;
 }
 
 .qrcode-placeholder {
   width: 200px;
   height: 200px;
-  background-color: #e0e0e0;
-  border-radius: 4px;
+  background-color: #fff;
+  border: 1px solid #ccc;
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-bottom: 15px;
-  border: 1px solid #ccc;
 }
 
-.qrcode-text {
+.qrcode-placeholder-text {
   font-size: 16px;
   color: #666;
   letter-spacing: 1px;
-}
-
-.qrcode-hint {
-  font-size: 14px;
-  color: #666;
-  line-height: 1.5;
 }
 
 /* 响应式设计 */

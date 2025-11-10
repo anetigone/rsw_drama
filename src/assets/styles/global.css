@@ -1,0 +1,75 @@
+/* --- 本地字体导入 ------------------------------------------------------ */
+/* 将项目内的字体文件注册为 CSS 字体族，使用 font-display: swap 提升首屏体验 */
+@font-face {
+  font-family: 'SiYuanSongTi';
+  src: url('../fonts/SiYuanSongTiRegular/SourceHanSerifCN-ExtraLight-3.otf') format('opentype');
+  font-weight: 200;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'SiYuanSongTi';
+  src: url('../fonts/SiYuanSongTiRegular/SourceHanSerifCN-Light-5.otf') format('opentype');
+  font-weight: 300;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'SiYuanSongTi';
+  src: url('../fonts/SiYuanSongTiRegular/SourceHanSerifCN-Regular-1.otf') format('opentype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'SiYuanSongTi';
+  src: url('../fonts/SiYuanSongTiRegular/SourceHanSerifCN-Medium-6.otf') format('opentype');
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'SiYuanSongTi';
+  src: url('../fonts/SiYuanSongTiRegular/SourceHanSerifCN-SemiBold-7.otf') format('opentype');
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'SiYuanSongTi';
+  src: url('../fonts/SiYuanSongTiRegular/SourceHanSerifCN-Bold-2.otf') format('opentype');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'SiYuanSongTi';
+  src: url('../fonts/SiYuanSongTiRegular/SourceHanSerifCN-Heavy-4.otf') format('opentype');
+  font-weight: 800;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'WenYueXHGuYaSong';
+  src: url('../fonts/WenYue-XHGuYaSong-JRFC-2.otf') format('opentype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'RuiYiSong';
+  src: url('../fonts/汉仪瑞意宋I_95W.ttf') format('opentype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* --------------------------------------------------------------------- */

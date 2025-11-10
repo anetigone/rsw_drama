@@ -2,6 +2,7 @@
   <div class="home-view">
     <HeroSection />
     <RegionSection />
+    <FigureDisplaySection />
     <ClassicsSection />
     <ThinkingSection />
     <ActivitiesSection />
@@ -13,6 +14,7 @@
 <script setup lang="ts">
 import HeroSection from '../components/HeroSection.vue'
 import RegionSection from '../components/RegionSection.vue'
+import FigureDisplaySection from '../components/FigureDisplaySection.vue'
 import ClassicsSection from '../components/ClassicsSection.vue'
 import ThinkingSection from '../components/ThinkingSection.vue'
 import ActivitiesSection from '../components/ActivitiesSection.vue'

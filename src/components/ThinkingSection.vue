@@ -31,7 +31,7 @@
 <style scoped>
 .thinking-section {
   padding: 80px 0;
-  background-color: #fff;
+  background-color: #f8f8f8;
 }
 
 .section-container {
@@ -41,6 +41,7 @@
 }
 
 .section-title {
+  font-family: WenYueXHGuYaSong;
   font-size: 18px;
   color: #666;
   text-align: center;
@@ -50,6 +51,7 @@
 }
 
 .section-subtitle {
+  font-family: WenYueXHGuYaSong;
   font-size: 36px;
   color: #1a1a1a;
   text-align: center;
@@ -68,7 +70,9 @@
 .thinking-image {
   width: 100%;
   height: 400px;
-  background-color: #e0e0e0;
+  background-image: url('/images/thinking/1.jpg');
+  background-size: cover;
+  background-position: center;
   border-radius: 4px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
