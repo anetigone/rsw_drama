@@ -1,59 +1,43 @@
 ﻿name: Build and Deploy to GitHub Pages
 
-# 触发条件
 on:
   push:
-    branches: [ main ]
-  workflow_dispatch: # 保留手动触发
+    branches: [ main, master ]
+  workflow_dispatch:
 
-# 全局环境变量：强制使用 Node.js 24（解决弃用警告）
-env:
-  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+permissions:
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
 
 jobs:
-  build-and-deploy:
+  build:
     runs-on: ubuntu-latest
-    permissions:
-      # 关键：授予写入权限（解决 git exit 128 权限问题）
-      contents: write
-      pages: write
-      id-token: write
-
     steps:
-      # 1. 拉取代码（升级到支持 Node.js 24 的版本）
-      - name: Checkout code
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
         with:
-          # 拉取完整提交记录（避免 git 历史缺失导致的推送失败）
-          fetch-depth: 0
+          node-version: 22
+          cache: npm
 
-      # 2. 设置 Node.js 环境（升级版本 + 适配 Node.js 24）
-      - name: Set up Node.js
-        uses: actions/setup-node@v4
+      - run: npm ci
+      - run: npm run build
+
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
         with:
-          node-version: '24' # 升级到 Node.js 24
-          cache: 'npm'
+          path: dist
 
-      # 3. 安装依赖
-      - name: Install dependencies
-        run: npm install
-
-      # 4. 构建项目（根据你的项目调整命令，比如 npm run build）
-      - name: Build project
-        run: npm run build
-
-      # 5. 配置 GitHub Pages（官方推荐步骤，替代旧的 peaceiris 方案）
-      - name: Setup Pages
-        uses: actions/configure-pages@v5
-
-      # 6. 上传构建产物
-      - name: Upload artifact
-        uses: actions/upload-pages-artifact@v3
-        with:
-          # 替换为你的构建输出目录（dist/build/./ 等）
-          path: './dist'
-
-      # 7. 部署到 GitHub Pages（解决权限问题的核心步骤）
-      - name: Deploy to GitHub Pages
+  deploy:
+    runs-on: ubuntu-latest
+    needs: build
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
         uses: actions/deploy-pages@v4
-        id: deployment
