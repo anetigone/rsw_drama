@@ -29,18 +29,20 @@
 </template>
 
 <script setup lang="ts">
+import { getImagePath } from '../utils/imagePath'
+
 interface Figure {
   name: string
   image: string
 }
 
 const figures: Figure[] = [
-  { name: '任国桢', image: '/images/person/任国桢.jpg' },
-  { name: '余上沅', image: '/images/person/余上沅.jpg' },
-  { name: '应云为', image: '/images/person/应云为.jpg' },
-  { name: '张骏祥', image: '/images/person/张骏祥.jpg' },
-  { name: '曹禺', image: '/images/person/曹禺.jpg' },
-  { name: '梁宗岱', image: '/images/person/梁宗岱.jpg' }
+  { name: '任国桢', image: getImagePath('/images/person/任国桢.jpg') },
+  { name: '余上沅', image: getImagePath('/images/person/余上沅.jpg') },
+  { name: '应云为', image: getImagePath('/images/person/应云为.jpg') },
+  { name: '张骏祥', image: getImagePath('/images/person/张骏祥.jpg') },
+  { name: '曹禺', image: getImagePath('/images/person/曹禺.jpg') },
+  { name: '梁宗岱', image: getImagePath('/images/person/梁宗岱.jpg') }
 ]
 </script>
 

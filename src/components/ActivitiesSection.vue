@@ -8,26 +8,26 @@
       <div class="images-container">
         <!-- 底层右侧大图片 -->
         <div class="bottom-layer">
-          <img src="/images/activities/4.jpg" alt="活动纪实大图" class="large-image" />
+          <img :src="getImagePath('/images/activities/4.jpg')" alt="活动纪实大图" class="large-image" />
         </div>
-        
+
         <!-- 上层左侧小图片 -->
         <div class="top-layer">
           <el-row :gutter="10">
             <el-col :span="24">
               <div class="top-row-1">
                 <div class="small-image-container narrow">
-                  <img src="/images/activities/1.jpg" alt="活动图片1" class="small-image img-edge-fade" />
+                  <img :src="getImagePath('/images/activities/1.jpg')" alt="活动图片1" class="small-image img-edge-fade" />
                 </div>
                 <div class="small-image-container wide">
-                  <img src="/images/activities/2.jpg" alt="活动图片2" class="small-image img-edge-fade" />
+                  <img :src="getImagePath('/images/activities/2.jpg')" alt="活动图片2" class="small-image img-edge-fade" />
                 </div>
               </div>
             </el-col>
             <el-col :span="24">
               <div class="top-row-2">
                 <div class="small-image-container full-width">
-                  <img src="/images/activities/3.jpg" alt="活动图片3" class="small-image img-edge-fade" />
+                  <img :src="getImagePath('/images/activities/3.jpg')" alt="活动图片3" class="small-image img-edge-fade" />
                 </div>
               </div>
             </el-col>
@@ -54,6 +54,8 @@
 </template>
 
 <script setup lang="ts">
+import { getImagePath } from '../utils/imagePath'
+
 interface Activity {
   title: string
   date: string

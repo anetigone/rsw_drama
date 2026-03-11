@@ -3,9 +3,9 @@
     <div class="section-container">
       <h2 class="section-title">THE THINKING</h2>
       <p class="section-subtitle">文思集录</p>
-      
+
       <div class="thinking-content">
-        <div class="thinking-image"></div>
+        <div class="thinking-image" :style="{ backgroundImage: `url('${getImagePath('/images/thinking/1.jpg')}')` }"></div>
         <div class="thinking-text">
           <p class="text-paragraph">
             1937年7月7日，抗日战争爆发。此后，中华教育界、文艺界开始了一场规模宏大的西迁运动。
@@ -25,7 +25,7 @@
 </template>
 
 <script setup lang="ts">
-// 可以在这里添加相关的逻辑和数据
+import { getImagePath } from '../utils/imagePath'
 </script>
 
 <style scoped>

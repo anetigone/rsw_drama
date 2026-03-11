@@ -26,9 +26,9 @@
           }"
           @click="handleActivityClick(activity)"
         >
-          <div class="activity-overlay" 
-            :style="{ 
-              backgroundImage: `url('/images/heroSection/1.jpg')`,
+          <div class="activity-overlay"
+            :style="{
+              backgroundImage: `url('${getImagePath('/images/heroSection/1.jpg')}')`,
               backgroundSize: 'cover',
               backgroundPosition: 'center'
             }"
@@ -52,6 +52,7 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { ArrowUp, ArrowDown } from '@element-plus/icons-vue'
+import { getImagePath } from '../utils/imagePath'
 
 interface Activity {
   id: number

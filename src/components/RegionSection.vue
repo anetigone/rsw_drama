@@ -23,6 +23,8 @@
 </template>
 
 <script setup lang="ts">
+import { getImagePath } from '../utils/imagePath'
+
 interface Region {
   id: number
   name: string
@@ -32,10 +34,10 @@ interface Region {
 }
 
 const regions: Region[] = [
-  { id: 1, name: '重庆', enName: 'CHONG QING', color: '#7a93ac', image: '/images/region/重庆.jpg' },
-  { id: 2, name: '昆明', enName: 'KUN MING', color: '#9c9c9c', image: '/images/region/昆明.jpg' },
-  { id: 3, name: '宜宾', enName: 'YI BING', color: '#8a7065', image: '/images/region/宜宾.jpg' },
-  { id: 4, name: '成都', enName: 'CHENG DU', color: '#7c6d5a', image: '/images/region/成都.jpg' }
+  { id: 1, name: '重庆', enName: 'CHONG QING', color: '#7a93ac', image: getImagePath('/images/region/重庆.jpg') },
+  { id: 2, name: '昆明', enName: 'KUN MING', color: '#9c9c9c', image: getImagePath('/images/region/昆明.jpg') },
+  { id: 3, name: '宜宾', enName: 'YI BING', color: '#8a7065', image: getImagePath('/images/region/宜宾.jpg') },
+  { id: 4, name: '成都', enName: 'CHENG DU', color: '#7c6d5a', image: getImagePath('/images/region/成都.jpg') }
 ]
 </script>
 

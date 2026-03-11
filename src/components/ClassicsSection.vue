@@ -32,6 +32,7 @@
 
 <script setup lang="ts">
 import { ref } from 'vue';
+import { getImagePath } from '../utils/imagePath'
 
 // 定义走马灯数据类型
 interface CarouselItem {
@@ -45,17 +46,17 @@ const carouselItems = ref<CarouselItem[]>([
   {
     tag: '- 文献集 -',
     title: '文献集',
-    imageUrl: '/images/classics/literature.jpg'
+    imageUrl: getImagePath('/images/classics/literature.jpg')
   },
   {
     tag: '- 话剧集 -',
     title: '话剧集',
-    imageUrl: '/images/classics/opera.jpg'
+    imageUrl: getImagePath('/images/classics/opera.jpg')
   },
   {
     tag: '- 翻译集 -',
     title: '翻译集',
-    imageUrl: '/images/classics/translation.jpg'
+    imageUrl: getImagePath('/images/classics/translation.jpg')
   }
 ]);
 
