@@ -13,7 +13,7 @@ const routes = [
 ]
 
 const router = createRouter({
-  history: createWebHistory('/rsw_drama/'),
+  history: createWebHistory('/'),
   routes
 })
 
