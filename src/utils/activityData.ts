@@ -1,6 +1,9 @@
 import type { Activity, ActivityDetail } from '../types/activityTypes'
 import { loadActivityContent } from './activityLoader'
 
+// 重新导出Activity类型，以便其他文件使用
+export type { Activity, ActivityDetail }
+
 /**
  * 活动基础数据列表
  * 只包含活动的基本信息，不包含详细内容

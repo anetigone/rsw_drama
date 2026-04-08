@@ -36,7 +36,7 @@
 
 <script setup lang="ts">
 import { useRouter } from 'vue-router'
-import { activities, Activity, getActivityById } from '../utils/activityData'
+import { activities, getActivityById } from '../utils/activityData'
 
 const router = useRouter()
 

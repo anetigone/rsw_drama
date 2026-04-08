@@ -21,12 +21,18 @@ const __dirname = path.dirname(__filename).replace(/^\//, '');
 // 配置参数
 const config = {
   outputDir: path.join(__dirname, '..', 'public', 'images', 'activities'),
+  contentDir: path.join(__dirname, '..', 'public', 'content', 'activities'),
   tempDir: path.join(__dirname, 'temp'),
 };
 
 // 确保输出目录存在
 if (!fs.existsSync(config.outputDir)) {
   fs.mkdirSync(config.outputDir, { recursive: true });
+}
+
+// 确保内容目录存在
+if (!fs.existsSync(config.contentDir)) {
+  fs.mkdirSync(config.contentDir, { recursive: true });
 }
 
 // 确保临时目录存在
@@ -162,14 +168,19 @@ function main() {
   
   convertWordToHtml(inputPath, activityId)
     .then(html => {
-      // 生成输出文件
-      const outputPath = path.join(config.tempDir, `activity_${activityId}_content.html`);
-      fs.writeFileSync(outputPath, html);
+      // 生成输出文件到内容目录
+      const contentOutputPath = path.join(config.contentDir, `activity_${activityId}.html`);
+      fs.writeFileSync(contentOutputPath, html);
       
-      console.log(`\n转换结果已保存到: ${outputPath}`);
-      console.log('\n请将以下内容复制到 src/utils/activityData.ts 中对应活动的 content 字段:');
+      // 生成临时文件（可选）
+      const tempOutputPath = path.join(config.tempDir, `activity_${activityId}_content.html`);
+      fs.writeFileSync(tempOutputPath, html);
+      
+      console.log(`\n转换结果已保存到: ${contentOutputPath}`);
+      console.log(`临时文件已保存到: ${tempOutputPath}`);
+      console.log('\n请更新 src/utils/activityData.ts 中的活动数据，确保 contentPath 指向正确的HTML文件路径:');
       console.log('==================================================');
-      console.log(html);
+      console.log(`contentPath: '/content/activities/activity_${activityId}.html'`);
       console.log('==================================================');
     })
     .catch(error => {
