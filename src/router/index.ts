@@ -2,6 +2,8 @@ import { createRouter, createWebHistory } from 'vue-router'
 import HomeView from '../views/HomeView.vue'
 import ActivitiesView from '../views/ActivitiesView.vue'
 import ActivityDetailView from '../views/ActivityDetailView.vue'
+import LiteratureView from '../views/LiteratureView.vue'
+import LiteratureDetailView from '../views/LiteratureDetailView.vue'
 
 const routes = [
   {
@@ -27,6 +29,22 @@ const routes = [
     },
     name: 'ActivityDetail',
     component: ActivityDetailView
+  },
+  {
+    path: '/literature',
+    meta: {
+      title: '经典汇编'
+    },
+    name: 'Literature',
+    component: LiteratureView
+  },
+  {
+    path: '/literature/:id',
+    meta: {
+      title: '文献详情'
+    },
+    name: 'LiteratureDetail',
+    component: LiteratureDetailView
   }
 ]
 

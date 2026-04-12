@@ -24,3 +24,6 @@ dist-ssr
 *.sw?
 
 *.zip
+
+method.pdf
+*.docx

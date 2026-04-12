@@ -1,0 +1,56 @@
+version: '3.8'
+
+services:
+  # 后端开发服务
+  backend-dev:
+    build:
+      context: ..
+      dockerfile: docker/backend.Dockerfile
+      target: development
+    container_name: rsw_drama_backend_dev
+    restart: "no"
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=development
+      - PORT=3000
+      - DATABASE_URL=file:./dev.db
+      - OSS_REGION=${OSS_REGION}
+      - OSS_ACCESS_KEY_ID=${OSS_ACCESS_KEY_ID}
+      - OSS_ACCESS_KEY_SECRET=${OSS_ACCESS_KEY_SECRET}
+      - OSS_BUCKET=${OSS_BUCKET}
+      - OSS_ENDPOINT=${OSS_ENDPOINT}
+      - CORS_ORIGIN=http://localhost:5173
+    volumes:
+      - ../backend:/app
+      - backend_node_modules:/app/node_modules
+      - backend_dev_data:/app/data
+    networks:
+      - rsw_network_dev
+    command: npm run dev
+
+  # 前端开发服务（可选，也可以在本地运行）
+  frontend-dev:
+    build:
+      context: ..
+      dockerfile: docker/frontend.Dockerfile
+      target: development
+    container_name: rsw_drama_frontend_dev
+    restart: "no"
+    ports:
+      - "5173:5173"
+    volumes:
+      - ../frontend:/app
+      - frontend_node_modules:/app/node_modules
+    networks:
+      - rsw_network_dev
+    command: npm run dev
+
+volumes:
+  backend_node_modules:
+  frontend_node_modules:
+  backend_dev_data:
+
+networks:
+  rsw_network_dev:
+    driver: bridge

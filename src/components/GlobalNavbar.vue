@@ -145,7 +145,7 @@ const navigateTo = (route: string) => {
       router.push('/')
       break
     case 'classics':
-      router.push('/classics')
+      router.push('/literature')
       break
     case 'thoughts':
       router.push('/thoughts')
