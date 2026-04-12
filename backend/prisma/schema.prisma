@@ -1,0 +1,56 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "sqlite"
+}
+
+model Literature {
+  id            String    @id @default(uuid())
+  title         String
+  author        String
+  year          Int
+  description   String?
+  category      String
+  ossKey        String    @unique
+  fileName      String
+  fileSize      Int
+  mimeType      String
+  totalPages    Int?
+  uploadDate    DateTime  @default(now())
+  updateDate    DateTime  @updatedAt
+  viewCount     Int       @default(0)
+  downloadCount Int       @default(0)
+  categoryId    String?
+  categoryRef   Category? @relation("CategoryLiteratures", fields: [categoryId], references: [id])
+
+  @@index([category])
+  @@index([uploadDate])
+  @@index([author])
+  @@index([categoryId])
+  @@map("literatures")
+}
+
+model Category {
+  id          String       @id @default(uuid())
+  name        String       @unique
+  description String?
+  sortOrder   Int          @default(0)
+  createdAt   DateTime     @default(now())
+  literatures Literature[] @relation("CategoryLiteratures")
+
+  @@map("categories")
+}
+
+model User {
+  id        String   @id @default(uuid())
+  email     String   @unique
+  password  String
+  role      String   @default("user")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("users")
+}
