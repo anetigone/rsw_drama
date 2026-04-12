@@ -1,19 +1,7 @@
 name: Build and Push Docker Images
 
 on:
-  push:
-    branches: [ main, master ]
-    paths:
-      - 'frontend/**'
-      - 'backend/**'
-      - 'docker/**'
-      - '.github/workflows/deploy-docker.yml'
   workflow_dispatch:
-    inputs:
-      push_images:
-        description: 'Push images to registry'
-        required: false
-        default: 'true'
 
 env:
   REGISTRY: ghcr.io

@@ -1,12 +1,6 @@
 name: Build and Deploy to GitHub Pages
 
 on:
-  push:
-    branches: [ main, master ]
-    # 只在 frontend 相关文件变更时触发
-    paths:
-      - 'frontend/**'
-      - '.github/workflows/deploy-gh-pages.yml'
   workflow_dispatch:
 
 permissions:
