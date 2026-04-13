@@ -10,34 +10,70 @@
 
     <!-- 文献列表 -->
     <div class="literature-container">
-      <div class="literature-list">
-        <div 
-          v-for="literature in literatures" 
+      <!-- 加载状态 -->
+      <div v-if="loading" class="loading-state">
+        <el-icon class="is-loading"><Loading /></el-icon>
+        <p>加载中...</p>
+      </div>
+
+      <!-- 文献列表 -->
+      <div v-else-if="literatures.length > 0" class="literature-list">
+        <div
+          v-for="literature in literatures"
           :key="literature.id"
           class="literature-item"
           @click="navigateToDetail(literature.id)"
         >
-          <h3>{{ literature.title }}</h3>
-          <p class="author">{{ literature.author }} ({{ literature.year }})</p>
-          <p class="description">{{ literature.description }}</p>
-          <div class="category">{{ literature.category }}</div>
+          <div class="literature-cover">
+            <img :src="literature.imageUrl" :alt="literature.title" />
+          </div>
+          <div class="literature-content">
+            <h3>{{ literature.title }}</h3>
+            <p class="author">{{ literature.author }} ({{ literature.year }})</p>
+            <p class="description">{{ literature.description || '暂无描述' }}</p>
+            <div class="category">{{ literature.category }}</div>
+          </div>
         </div>
+      </div>
+
+      <!-- 空状态 -->
+      <div v-else class="empty-state">
+        <p>暂无文献数据</p>
       </div>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue';
+import { onMounted, onActivated } from 'vue';
 import { useRouter } from 'vue-router';
-import { literatureData } from '../utils/literatureData';
-import type { Literature } from '../types/literatureTypes';
+import { useLiteratureStore } from '../stores/literature';
+import { storeToRefs } from 'pinia';
+import { ElMessage } from 'element-plus';
+
+// 定义组件名称，供 keep-alive 使用
+defineOptions({
+  name: 'LiteratureView'
+});
 
 const router = useRouter();
-const literatures = ref<Literature[]>([]);
+const literatureStore = useLiteratureStore();
+const { literatures, loading } = storeToRefs(literatureStore);
 
-onMounted(() => {
-  literatures.value = literatureData;
+// 首次挂载时加载数据
+onMounted(async () => {
+  try {
+    await literatureStore.fetchLiteratures();
+  } catch (error) {
+    ElMessage.error('加载文献列表失败，请稍后重试');
+  }
+});
+
+// 当组件被 keep-alive 激活时（从详情页返回），不需要重新加载
+// 数据已经在 store 中缓存了
+onActivated(() => {
+  // 可以在这里添加一些激活时的逻辑
+  // 但不需要重新获取数据，因为数据已经在 store 中
 });
 
 const navigateToDetail = (id: string) => {
@@ -85,6 +121,21 @@ const navigateToDetail = (id: string) => {
   padding: 0 20px;
 }
 
+.loading-state,
+.empty-state {
+  text-align: center;
+  padding: 60px 20px;
+  color: #666;
+  font-size: 1.1rem;
+}
+
+.loading-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+}
+
 .literature-list {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
@@ -93,11 +144,13 @@ const navigateToDetail = (id: string) => {
 
 .literature-item {
   background-color: #fff;
-  padding: 2rem;
   border-radius: 8px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   cursor: pointer;
   transition: transform 0.3s ease, box-shadow 0.3s ease;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
 }
 
 .literature-item:hover {
@@ -105,26 +158,47 @@ const navigateToDetail = (id: string) => {
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
 }
 
+.literature-cover {
+  width: 100%;
+  height: 200px;
+  overflow: hidden;
+  background-color: #f5f5f5;
+}
+
+.literature-cover img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.literature-content {
+  padding: 1.5rem;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
 .literature-item h3 {
   margin-bottom: 0.5rem;
-  font-size: 1.5rem;
+  font-size: 1.3rem;
   color: #333;
 }
 
 .author {
-  margin-bottom: 1rem;
+  margin-bottom: 0.8rem;
   color: #666;
   font-size: 0.9rem;
 }
 
 .description {
-  margin-bottom: 1.5rem;
+  margin-bottom: 1rem;
   color: #555;
   line-height: 1.5;
   display: -webkit-box;
-  -webkit-line-clamp: 3;
+  -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
+  flex: 1;
 }
 
 .category {
@@ -134,6 +208,7 @@ const navigateToDetail = (id: string) => {
   border-radius: 20px;
   font-size: 0.8rem;
   color: #666;
+  align-self: flex-start;
 }
 
 /* 响应式设计 */

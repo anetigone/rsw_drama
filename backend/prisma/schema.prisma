@@ -13,7 +13,6 @@ model Literature {
   author        String
   year          Int
   description   String?
-  category      String
   ossKey        String    @unique
   fileName      String
   fileSize      Int
@@ -23,10 +22,10 @@ model Literature {
   updateDate    DateTime  @updatedAt
   viewCount     Int       @default(0)
   downloadCount Int       @default(0)
-  categoryId    String?
-  categoryRef   Category? @relation("CategoryLiteratures", fields: [categoryId], references: [id])
+  imageUrl      String
+  categoryId    String
+  categoryRef   Category @relation("CategoryLiteratures", fields: [categoryId], references: [id])
 
-  @@index([category])
   @@index([uploadDate])
   @@index([author])
   @@index([categoryId])

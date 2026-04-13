@@ -1,4 +1,4 @@
-import prisma from '../config/database';
+import {prisma} from '../config/database';
 import { AppError } from '../middleware/error.handler';
 import { LiteratureQuery, LiteratureCreateInput, LiteratureUpdateInput } from '../types';
 import logger from '../utils/logger';
@@ -24,7 +24,18 @@ export class LiteratureService {
     const where: any = {};
 
     if (category) {
-      where.category = category;
+      // 通过 category name 查找 categoryId
+      const categoryRecord = await prisma.category.findUnique({
+        where: { name: category },
+        select: { id: true },
+      });
+
+      if (categoryRecord) {
+        where.categoryId = categoryRecord.id;
+      } else {
+        // 如果分类不存在，返回空结果
+        return { items: [], total: 0, page, pageSize };
+      }
     }
 
     if (author) {
@@ -55,11 +66,19 @@ export class LiteratureService {
           author: true,
           year: true,
           description: true,
-          category: true,
+          categoryId: true,
           totalPages: true,
           uploadDate: true,
           viewCount: true,
           downloadCount: true,
+          ossKey: true,
+          fileName: true,
+          imageUrl: true,
+          categoryRef: {
+            select: {
+              name: true,
+            },
+          },
         },
       }),
       prisma.literature.count({ where }),
@@ -76,6 +95,13 @@ export class LiteratureService {
   async getLiteratureById(id: string) {
     const literature = await prisma.literature.findUnique({
       where: { id },
+      include: {
+        categoryRef: {
+          select: {
+            name: true,
+          },
+        },
+      },
     });
 
     if (!literature) {
@@ -91,8 +117,23 @@ export class LiteratureService {
    * 创建文献
    */
   async createLiterature(input: LiteratureCreateInput) {
+    // 验证 category 是否存在
+    const category = await prisma.category.findUnique({
+      where: { name: input.category },
+    });
+
+    if (!category) {
+      throw new AppError(400, 'INVALID_CATEGORY', `分类 "${input.category}" 不存在`);
+    }
+
+    // 创建文献，使用 categoryId
+    const { category: _categoryName, imageUrl: _imageUrl, ...restInput } = input;
     const literature = await prisma.literature.create({
-      data: input,
+      data: {
+        ...restInput,
+        categoryId: category.id,
+        imageUrl: input.imageUrl || '', // 确保 imageUrl 被保存
+      },
     });
 
     logger.info(`Created literature: ${literature.id}`);
@@ -113,9 +154,28 @@ export class LiteratureService {
       throw new AppError(404, 'NOT_FOUND', '文献不存在');
     }
 
+    // 如果要更新 category，先验证新 category 是否存在
+    let updateData: any = { ...input };
+    if (input.category) {
+      const category = await prisma.category.findUnique({
+        where: { name: input.category },
+      });
+
+      if (!category) {
+        throw new AppError(400, 'INVALID_CATEGORY', `分类 "${input.category}" 不存在`);
+      }
+
+      // 移除 category 字段，使用 categoryId
+      const { category: _categoryName, ...restInput } = input;
+      updateData = {
+        ...restInput,
+        categoryId: category.id,
+      };
+    }
+
     const literature = await prisma.literature.update({
       where: { id },
-      data: input,
+      data: updateData,
     });
 
     logger.info(`Updated literature: ${id}`);
@@ -216,19 +276,31 @@ export class LiteratureService {
         prisma.literature.aggregate({
           _sum: { downloadCount: true },
         }),
-        prisma.literature.groupBy({
-          by: ['category'],
-          _count: true,
+        prisma.literature.findMany({
+          select: {
+            categoryRef: {
+              select: {
+                name: true,
+              },
+            },
+          },
         }),
       ]);
+
+    // 统计每个分类的文献数量
+    const categoryCounts = categories.reduce((acc: Record<string, number>, lit: any) => {
+      const categoryName = lit.categoryRef?.name || '未分类';
+      acc[categoryName] = (acc[categoryName] || 0) + 1;
+      return acc;
+    }, {});
 
     return {
       totalLiteratures,
       totalViews: totalViews._sum.viewCount || 0,
       totalDownloads: totalDownloads._sum.downloadCount || 0,
-      categories: categories.map(c => ({
-        name: c.category,
-        count: c._count,
+      categories: Object.entries(categoryCounts).map(([name, count]) => ({
+        name,
+        count,
       })),
     };
   }

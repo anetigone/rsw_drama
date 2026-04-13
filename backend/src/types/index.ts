@@ -31,6 +31,7 @@ export interface LiteratureCreateInput {
   fileSize: number;
   mimeType: string;
   totalPages?: number;
+  imageUrl?: string;
 }
 
 export interface LiteratureUpdateInput {
@@ -40,4 +41,5 @@ export interface LiteratureUpdateInput {
   description?: string;
   category?: string;
   totalPages?: number;
+  imageUrl?: string;
 }

@@ -6,7 +6,11 @@ import GlobalNavbar from './components/GlobalNavbar.vue'
 <template>
   <div class="app-container">
     <GlobalNavbar />
-    <RouterView />
+    <RouterView v-slot="{ Component }">
+      <keep-alive include="LiteratureView,LiteratureDetailView">
+        <component :is="Component" />
+      </keep-alive>
+    </RouterView>
   </div>
 </template>
 

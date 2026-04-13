@@ -2,7 +2,6 @@ import { Request, Response } from 'express';
 import { z } from 'zod';
 import literatureService from '../services/literature.service';
 import ossService from '../services/oss.service';
-import { AppError } from '../middleware/error.handler';
 import { successResponse, paginatedResponse } from '../utils/response';
 import logger from '../utils/logger';
 
@@ -28,6 +27,7 @@ const literatureCreateSchema = z.object({
   fileSize: z.number().int().positive(),
   mimeType: z.string().min(1),
   totalPages: z.number().int().positive().optional(),
+  imageUrl: z.string().optional(),
 });
 
 const literatureUpdateSchema = z.object({
@@ -37,11 +37,85 @@ const literatureUpdateSchema = z.object({
   description: z.string().optional(),
   category: z.string().min(1).optional(),
   totalPages: z.number().int().positive().optional(),
+  imageUrl: z.string().optional(),
 });
 
 const paramsSchema = z.object({
-  id: z.string().uuid(),
+  id: z.uuid(),
 });
+
+// 分类缓存
+let categoryCache: Map<string, string> | null = null;
+let categoryCacheTime: number = 0;
+const CATEGORY_CACHE_TTL = 5 * 60 * 1000; // 5分钟缓存
+
+/**
+ * 获取分类映射（带缓存）
+ */
+async function getCategoryMap(): Promise<Map<string, string>> {
+  const now = Date.now();
+
+  // 如果缓存存在且未过期，直接返回
+  if (categoryCache && (now - categoryCacheTime) < CATEGORY_CACHE_TTL) {
+    return categoryCache;
+  }
+
+  // 否则重新加载分类
+  const categories = await literatureService.getCategories();
+  categoryCache = new Map(categories.map(cat => [cat.id, cat.name]));
+  categoryCacheTime = now;
+
+  return categoryCache;
+}
+
+/**
+ * 为文献对象添加动态 URL
+ */
+async function enrichLiteratureWithURLs(literature: any, categoryMap?: Map<string, string>) {
+  // 生成公共访问 URL (永久有效)
+  const publicUrl = ossService.getPublicUrl(literature.ossKey);
+
+  // 处理封面图片 URL - 加上 OSS 域名
+  let coverUrl = literature.imageUrl;
+  if (literature.imageUrl && !literature.imageUrl.startsWith('http')) {
+    // 如果 imageUrl 只是 OSS key，需要加上完整域名
+    coverUrl = ossService.getPublicUrl(literature.imageUrl);
+  }
+
+  const result = {
+    ...literature,
+    imageUrl: coverUrl, // 使用完整的公共 URL
+    urls: {
+      // 永久公共访问 URL
+      public: publicUrl,
+      // 预签名阅读 URL (1小时有效,用于私有文件或需要权限控制的场景)
+      read: literature.ossKey ? null : null, // 按需生成
+      // 下载 URL (需要调用专门的接口)
+      download: `/api/literatures/${literature.id}/download`,
+    },
+  };
+
+  // 如果提供了 categoryMap，添加 category 字段
+  if (categoryMap) {
+    (result as any).category = categoryMap.get(literature.categoryId) || '未分类';
+  }
+
+  return result;
+}
+
+/**
+ * 批量为文献列表添加动态 URL
+ */
+async function enrichLiteraturesWithURLs(literatures: any[]) {
+  // 获取分类映射（使用缓存）
+  const categoryMap = await getCategoryMap();
+
+  return Promise.all(
+    literatures.map(async (lit) => {
+      return await enrichLiteratureWithURLs(lit, categoryMap);
+    })
+  );
+}
 
 export class LiteratureController {
   /**
@@ -51,8 +125,11 @@ export class LiteratureController {
     const query = literatureQuerySchema.parse(req.query);
     const result = await literatureService.getLiteratures(query);
 
+    // 为每个文献添加动态 URL
+    const itemsWithURLs = await enrichLiteraturesWithURLs(result.items);
+
     return res.json(
-      paginatedResponse(result.items, result.page, result.pageSize, result.total)
+      paginatedResponse(itemsWithURLs, result.page, result.pageSize, result.total)
     );
   }
 
@@ -63,7 +140,16 @@ export class LiteratureController {
     const { id } = paramsSchema.parse(req.params);
     const literature = await literatureService.getLiteratureById(id);
 
-    return res.json(successResponse(literature));
+    // 增加浏览计数
+    await literatureService.incrementViewCount(id);
+
+    // 获取分类映射（使用缓存）
+    const categoryMap = await getCategoryMap();
+
+    // 添加动态 URL 和分类
+    const enriched = await enrichLiteratureWithURLs(literature, categoryMap);
+
+    return res.json(successResponse(enriched));
   }
 
   /**
@@ -73,8 +159,11 @@ export class LiteratureController {
     const input = literatureCreateSchema.parse(req.body);
     const literature = await literatureService.createLiterature(input);
 
+    // 添加动态 URL
+    const enriched = await enrichLiteratureWithURLs(literature);
+
     return res.status(201).json(
-      successResponse(literature, '文献创建成功')
+      successResponse(enriched, '文献创建成功')
     );
   }
 
@@ -86,7 +175,10 @@ export class LiteratureController {
     const input = literatureUpdateSchema.parse(req.body);
     const literature = await literatureService.updateLiterature(id, input);
 
-    return res.json(successResponse(literature, '文献更新成功'));
+    // 添加动态 URL
+    const enriched = await enrichLiteratureWithURLs(literature);
+
+    return res.json(successResponse(enriched, '文献更新成功'));
   }
 
   /**
@@ -128,24 +220,34 @@ export class LiteratureController {
   }
 
   /**
-   * 获取预签名阅读 URL
+   * 获取预签名阅读 URL (用于在线预览)
+   * 路由: GET /api/literatures/:id/read-url
    */
   async getReadUrl(req: Request, res: Response) {
     const { id } = paramsSchema.parse(req.params);
     const literature = await literatureService.getLiteratureById(id);
 
-    const readUrl = await ossService.generatePresignedReadUrl(literature.ossKey);
+    // 生成预签名 URL (1小时有效)
+    // 用于前端阅读器，过期后需要重新获取
+    const readUrl = await ossService.generatePresignedReadUrl(literature.ossKey, 3600);
+
+    logger.info(`Generated read URL for literature ${id}`, {
+      ossKey: literature.ossKey,
+      expiresIn: 3600
+    });
 
     return res.json(
       successResponse({
         readUrl,
         expiresIn: 3600,
+        fileName: literature.fileName,
       })
     );
   }
 
   /**
-   * 获取下载 URL
+   * 获取下载 URL (增加下载计数)
+   * 路由: GET /api/literatures/:id/download-url
    */
   async getDownloadUrl(req: Request, res: Response) {
     const { id } = paramsSchema.parse(req.params);
@@ -154,7 +256,13 @@ export class LiteratureController {
     // 增加下载计数
     await literatureService.incrementDownloadCount(id);
 
-    const downloadUrl = await ossService.generatePresignedReadUrl(literature.ossKey);
+    // 生成预签名下载 URL (1小时有效)
+    const downloadUrl = await ossService.generatePresignedReadUrl(literature.ossKey, 3600);
+
+    logger.info(`Generated download URL for literature ${id}`, {
+      ossKey: literature.ossKey,
+      expiresIn: 3600
+    });
 
     return res.json(
       successResponse({

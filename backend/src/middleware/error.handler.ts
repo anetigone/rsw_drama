@@ -34,7 +34,7 @@ export function errorHandler(
       errorResponse(
         'VALIDATION_ERROR',
         '请求参数验证失败',
-        err.errors
+        err.issues
       )
     );
   }

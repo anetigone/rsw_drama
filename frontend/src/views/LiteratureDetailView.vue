@@ -7,8 +7,7 @@
       <!-- 上部分：书籍信息和封面 -->
       <div class="top-section">
         <div class="book-cover">
-          <!-- 使用占位封面图片 -->
-          <img src="/images/classics/literature.jpg" :alt="literature.title" />
+          <img :src="literature.imageUrl" :alt="literature.title" />
         </div>
         <div class="book-info">
           <h1>{{ literature.title }}</h1>
@@ -52,44 +51,95 @@
     <!-- PDF 查看器 -->
     <PDFViewer
       v-if="showPDFViewer"
-      :url="literature?.source || ''"
+      :url="readUrl"
       @close="closePDFViewer"
     />
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, watch, onActivated } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
-import { literatureData } from '../utils/literatureData';
+import { useLiteratureStore } from '../stores/literature';
 import type { Literature } from '../types/literatureTypes';
 import PDFViewer from '../components/PDFViewer.vue';
+import { ElMessage } from 'element-plus';
+
+// 定义组件名称，供 keep-alive 使用
+defineOptions({
+  name: 'LiteratureDetailView'
+});
 
 const router = useRouter();
 const route = useRoute();
+const literatureStore = useLiteratureStore();
+
 const literature = ref<Literature | null>(null);
 const showPDFViewer = ref(false);
+const readUrl = ref<string>('');
 
-onMounted(() => {
-  const id = route.params.id as string;
-  literature.value = literatureData.find(item => item.id === id) || null;
+const loadLiterature = async () => {
+  try {
+    const id = route.params.id as string;
+    literature.value = await literatureStore.fetchLiteratureById(id);
+  } catch (error) {
+    console.error('加载文献详情失败:', error);
+    ElMessage.error('加载文献详情失败，请稍后重试');
+  }
+};
+
+// 监听路由参数变化，当 ID 变化时重新加载
+watch(() => route.params.id, async (newId, oldId) => {
+  if (newId && newId !== oldId) {
+    await loadLiterature();
+  }
+});
+
+// 首次挂载时加载数据
+onMounted(async () => {
+  await loadLiterature();
+});
+
+// 当组件被 keep-alive 激活时（从列表页进入不同的详情页）
+// 这里不需要做任何事，因为 watch 已经会处理路由参数变化
+onActivated(() => {
+  // 数据已经在 store 中缓存，或者通过 watch 处理了路由变化
 });
 
 const goBack = () => {
   router.push('/literature');
 };
 
-const openPDFViewer = () => {
-  showPDFViewer.value = true;
+const openPDFViewer = async () => {
+  try {
+    if (literature.value) {
+      // 从 store 获取预签名阅读URL（自动缓存）
+      const url = await literatureStore.getReadUrl(literature.value.id);
+      readUrl.value = url;
+      showPDFViewer.value = true;
+    }
+  } catch (error) {
+    console.error('打开PDF阅读器失败:', error);
+    ElMessage.error('打开PDF阅读器失败，请稍后重试');
+  }
 };
 
 const closePDFViewer = () => {
   showPDFViewer.value = false;
 };
 
-const downloadLiterature = () => {
-  if (literature.value) {
-    window.open(literature.value.source, '_blank');
+const downloadLiterature = async () => {
+  try {
+    if (literature.value) {
+      // 从 store 获取下载URL（自动缓存，会自动增加下载计数）
+      const url = await literatureStore.getDownloadUrl(literature.value.id);
+      // 打开下载链接
+      window.open(url, '_blank');
+      ElMessage.success('开始下载');
+    }
+  } catch (error) {
+    console.error('下载文献失败:', error);
+    ElMessage.error('下载文献失败，请稍后重试');
   }
 };
 </script>
