@@ -1,13 +1,15 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import { useAuthStore } from '../stores/auth'
-import HomeView from '../views/HomeView.vue'
-import ActivitiesView from '../views/ActivitiesView.vue'
-import ActivityDetailView from '../views/ActivityDetailView.vue'
-import LiteratureView from '../views/LiteratureView.vue'
-import LiteratureDetailView from '../views/LiteratureDetailView.vue'
-import AdminView from '../views/AdminView.vue'
-import LoginView from '../views/LoginView.vue'
-import UnderConstructionView from '../views/UnderConstructionView.vue'
+
+// 路由懒加载 - 只有在访问时才加载对应组件，提高首屏加载速度
+const HomeView = () => import('../views/HomeView.vue')
+const ActivitiesView = () => import('../views/ActivitiesView.vue')
+const ActivityDetailView = () => import('../views/ActivityDetailView.vue')
+const LiteratureView = () => import('../views/LiteratureView.vue')
+const LiteratureDetailView = () => import('../views/LiteratureDetailView.vue')
+const AdminView = () => import('../views/AdminView.vue')
+const LoginView = () => import('../views/LoginView.vue')
+const UnderConstructionView = () => import('../views/UnderConstructionView.vue')
 
 const routes = [
   {
@@ -99,10 +101,21 @@ router.beforeEach(async (to, _from, next) => {
     }
 
     // 已登录但未验证用户信息,尝试验证
-    if (!authStore.user) {
-      const isValid = await authStore.verify()
-      if (!isValid) {
-        // token 无效,跳转到登录页
+    // 只有在用户信息不存在时才验证，避免每次都调用验证接口
+    if (!authStore.user && authStore.token) {
+      try {
+        const isValid = await authStore.verify()
+        if (!isValid) {
+          // token 无效,跳转到登录页
+          next({
+            name: 'Login',
+            query: { redirect: to.fullPath }
+          })
+          return
+        }
+      } catch (error) {
+        // 验证接口调用失败，清除登录状态并跳转登录页
+        authStore.logout()
         next({
           name: 'Login',
           query: { redirect: to.fullPath }

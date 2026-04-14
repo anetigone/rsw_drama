@@ -41,6 +41,12 @@ class ApiClient {
       const data = await response.json();
 
       if (!response.ok) {
+        // 如果是 401 错误，清除登录状态
+        if (response.status === 401 && token) {
+          localStorage.removeItem('token');
+          localStorage.removeItem('user');
+          // 不在这里跳转，让组件处理
+        }
         throw new Error(data.error?.message || data.message || '请求失败');
       }
 
@@ -72,6 +78,10 @@ class ApiClient {
 
     return this.request<T>(`${endpoint}${queryString}`, {
       method: 'GET',
+      headers: {
+        'Cache-Control': 'no-cache',
+        'Pragma': 'no-cache',
+      },
     });
   }
 

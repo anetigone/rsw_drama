@@ -25,7 +25,12 @@
           @click="navigateToDetail(literature.id)"
         >
           <div class="literature-cover">
-            <img :src="literature.imageUrl" :alt="literature.title" />
+            <img
+              :src="literature.imageUrl"
+              :alt="literature.title"
+              loading="lazy"
+              decoding="async"
+            />
           </div>
           <div class="literature-content">
             <h3>{{ literature.title }}</h3>
@@ -60,20 +65,23 @@ const router = useRouter();
 const literatureStore = useLiteratureStore();
 const { literatures, loading } = storeToRefs(literatureStore);
 
-// 首次挂载时加载数据
-onMounted(async () => {
-  try {
-    await literatureStore.fetchLiteratures();
-  } catch (error) {
+// 首次挂载时加载数据，不阻塞页面渲染
+onMounted(() => {
+  // 不使用 await，让页面先渲染，数据加载完成后自动更新
+  literatureStore.fetchLiteratures().catch((error) => {
+    console.error('加载文献列表失败:', error);
     ElMessage.error('加载文献列表失败，请稍后重试');
-  }
+  });
 });
 
-// 当组件被 keep-alive 激活时（从详情页返回），不需要重新加载
-// 数据已经在 store 中缓存了
+// 当组件被 keep-alive 激活时（从详情页返回），检查是否需要刷新数据
 onActivated(() => {
-  // 可以在这里添加一些激活时的逻辑
-  // 但不需要重新获取数据，因为数据已经在 store 中
+  // 如果缓存已过期，后台静默刷新数据
+  if (!literatureStore.isCacheValid && literatures.value.length > 0) {
+    literatureStore.fetchLiteratures(true).catch((error) => {
+      console.error('后台刷新文献列表失败:', error);
+    });
+  }
 });
 
 const navigateToDetail = (id: string) => {

@@ -39,7 +39,7 @@
       <div class="activities-list-container">
         <h3 class="list-title">近期活动</h3>
         <div class="activities-list">
-          <div v-for="(activity, index) in activities" :key="index" class="activity-item">
+          <div v-for="activity in activities.slice(0, 3)" :key="activity.id" class="activity-item">
             <div class="activity-info">
               <h4 class="activity-title">{{ activity.title }}</h4>
               <p class="activity-date">{{ activity.date }}</p>
@@ -54,35 +54,14 @@
 </template>
 
 <script setup lang="ts">
+import { useRouter } from 'vue-router'
 import { getImagePath } from '../utils/imagePath'
+import { activities } from '../utils/activityData'
 
-interface Activity {
-  title: string
-  date: string
-  description: string
-}
-
-const activities: Activity[] = [
-  {
-    title: '《战友》',
-    date: '1941年11月',
-    description: '表现革命战士坚定信念和深厚友谊的经典剧作，展现了抗战时期革命者的精神风貌。'
-  },
-  {
-    title: '《回春之曲》',
-    date: '1942年3月',
-    description: '描写知识分子投身抗日救亡运动的感人故事，通过艺术形式传递爱国主义精神。'
-  },
-  {
-    title: '《放下你的鞭子》',
-    date: '1940年8月',
-    description: '抗战时期著名街头剧，由陈鲤庭根据田汉的独幕剧改编，激发了广大民众的爱国热情。'
-  }
-]
+const router = useRouter()
 
 const handleMore = () => {
-  // 处理"更多"按钮点击事件
-  console.log('查看更多活动')
+  router.push('/activities')
 }
 </script>
 

@@ -7,7 +7,12 @@
       <!-- 上部分：书籍信息和封面 -->
       <div class="top-section">
         <div class="book-cover">
-          <img :src="literature.imageUrl" :alt="literature.title" />
+          <img
+            :src="literature.imageUrl"
+            :alt="literature.title"
+            loading="lazy"
+            decoding="async"
+          />
         </div>
         <div class="book-info">
           <h1>{{ literature.title }}</h1>
@@ -78,10 +83,18 @@ const literature = ref<Literature | null>(null);
 const showPDFViewer = ref(false);
 const readUrl = ref<string>('');
 
-const loadLiterature = async () => {
+const loadLiterature = () => {
   try {
     const id = route.params.id as string;
-    literature.value = await literatureStore.fetchLiteratureById(id);
+    // 不阻塞页面渲染，让数据异步加载
+    literatureStore.fetchLiteratureById(id)
+      .then((data) => {
+        literature.value = data;
+      })
+      .catch((error) => {
+        console.error('加载文献详情失败:', error);
+        ElMessage.error('加载文献详情失败，请稍后重试');
+      });
   } catch (error) {
     console.error('加载文献详情失败:', error);
     ElMessage.error('加载文献详情失败，请稍后重试');
@@ -89,15 +102,20 @@ const loadLiterature = async () => {
 };
 
 // 监听路由参数变化，当 ID 变化时重新加载
-watch(() => route.params.id, async (newId, oldId) => {
+watch(() => route.params.id, (newId, oldId) => {
   if (newId && newId !== oldId) {
-    await loadLiterature();
+    // 清空当前数据，显示加载状态
+    literature.value = null;
+    loadLiterature();
   }
 });
 
 // 首次挂载时加载数据
-onMounted(async () => {
-  await loadLiterature();
+onMounted(() => {
+  // 如果当前没有文献数据，则加载
+  if (!literature.value) {
+    loadLiterature();
+  }
 });
 
 // 当组件被 keep-alive 激活时（从列表页进入不同的详情页）

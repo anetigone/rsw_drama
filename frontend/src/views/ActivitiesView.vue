@@ -11,14 +11,19 @@
     <!-- 活动列表 -->
     <div class="activities-container">
       <div class="activities-grid">
-        <div 
-          v-for="activity in activities" 
+        <div
+          v-for="activity in activities"
           :key="activity.id"
           class="activity-card"
           @click="navigateToDetail(activity.id)"
         >
           <div class="activity-image">
-            <img :src="getActivityImage(activity.id)" :alt="activity.title" />
+            <img
+              :src="getActivityImage(activity.id)"
+              :alt="activity.title"
+              loading="lazy"
+              decoding="async"
+            />
           </div>
           <div class="activity-content">
             <h3 class="activity-title">{{ activity.title }}</h3>

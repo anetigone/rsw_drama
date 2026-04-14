@@ -112,8 +112,8 @@
 </template>
 
 <script setup lang="ts">
-import { ref, nextTick } from 'vue'
-import { useRouter } from 'vue-router'
+import { ref, nextTick, watch } from 'vue'
+import { useRouter, useRoute } from 'vue-router'
 import { Search } from '@element-plus/icons-vue'
 
 // 响应式数据
@@ -123,6 +123,35 @@ const mobileMenuVisible = ref(false)
 const showSearchPanel = ref(false)
 const searchInputRef = ref()
 const router = useRouter()
+const route = useRoute()
+
+// 根据路由路径获取对应的菜单索引
+const getIndexFromPath = (path: string): string => {
+  switch (path) {
+    case '/':
+      return 'home'
+    case '/literature':
+      return 'classics'
+    case '/thoughts':
+      return 'thoughts'
+    case '/activities':
+      return 'activities'
+    case '/about':
+      return 'about'
+    case '/profile':
+      return 'profile'
+    default:
+      // 处理动态路由，如 /activity/:id
+      if (path.startsWith('/activity/')) return 'activities'
+      if (path.startsWith('/literature/')) return 'classics'
+      return 'home'
+  }
+}
+
+// 监听路由变化，更新激活状态
+watch(() => route.path, (newPath) => {
+  activeIndex.value = getIndexFromPath(newPath)
+}, { immediate: true })
 
 // 移动端菜单项
 const mobileMenuItems = [
