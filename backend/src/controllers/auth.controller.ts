@@ -5,30 +5,42 @@ import { validateEnv } from '../config/env';
 
 export const login = async (req: Request, res: Response) => {
   try {
-    const { password } = req.body;
+    const { username, password } = req.body;
 
-    if (!password) {
+    if (!username || !password) {
       return res.status(400).json({
         success: false,
-        error: '请提供密码',
+        error: '请提供用户名和密码',
       });
     }
 
     const env = validateEnv();
 
+    // 查找匹配的管理员用户
+    const adminUser = env.ADMIN_USERS.find(
+      (user: any) => user.username === username
+    );
+
+    if (!adminUser) {
+      return res.status(401).json({
+        success: false,
+        error: '用户名或密码错误',
+      });
+    }
+
     // 验证密码
-    const isPasswordValid = await bcrypt.compare(password, env.ADMIN_PASSWORD);
+    const isPasswordValid = await bcrypt.compare(password, adminUser.password);
 
     if (!isPasswordValid) {
       return res.status(401).json({
         success: false,
-        error: '密码错误',
+        error: '用户名或密码错误',
       });
     }
 
     // 生成 JWT token
     const token = jwt.sign(
-      { userId: 'admin' },
+      { userId: adminUser.username, username: adminUser.username },
       env.JWT_SECRET,
       { expiresIn: '7d' }
     );
@@ -38,8 +50,9 @@ export const login = async (req: Request, res: Response) => {
       data: {
         token,
         user: {
-          id: 'admin',
-          name: '管理员',
+          id: adminUser.username,
+          username: adminUser.username,
+          name: adminUser.name || adminUser.username,
         },
       },
     });
@@ -54,13 +67,37 @@ export const login = async (req: Request, res: Response) => {
 
 export const verify = async (req: Request, res: Response) => {
   try {
-    // 如果能到这里,说明已经通过认证中间件验证
+    const env = validateEnv();
+
+    // 从 JWT 中获取用户信息
+    const authUser = (req as any).user;
+
+    if (!authUser || !authUser.username) {
+      return res.status(401).json({
+        success: false,
+        error: '未授权',
+      });
+    }
+
+    // 查找完整用户信息
+    const adminUser = env.ADMIN_USERS.find(
+      (user: any) => user.username === authUser.username
+    );
+
+    if (!adminUser) {
+      return res.status(401).json({
+        success: false,
+        error: '用户不存在',
+      });
+    }
+
     return res.json({
       success: true,
       data: {
         user: {
-          id: 'admin',
-          name: '管理员',
+          id: adminUser.username,
+          username: adminUser.username,
+          name: adminUser.name || adminUser.username,
         },
       },
     });

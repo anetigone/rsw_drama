@@ -22,7 +22,7 @@
         </div>
         <template #tip>
           <div class="el-upload__tip">
-            只支持 PDF 文件，且不超过 50MB
+            只支持 PDF 文件，且不超过 {{ maxFileSizeInMB }}MB
           </div>
         </template>
       </el-upload>
@@ -170,6 +170,10 @@ const emit = defineEmits<{
   cancel: [];
 }>();
 
+// 从环境变量读取文件大小限制，默认为 50MB
+const maxFileSizeInMB: number = parseInt(import.meta.env.VITE_MAX_FILE_SIZE || '50', 10);
+const maxSize: number = maxFileSizeInMB * 1024 * 1024;
+
 const currentStep = ref(0);
 const selectedFile = ref<File | null>(null);
 const coverFile = ref<File | null>(null);
@@ -222,10 +226,9 @@ const handleFileChange = async (file: UploadFile) => {
     return;
   }
 
-  // 验证文件大小 (50MB)
-  const maxSize = 50 * 1024 * 1024;
+  // 验证文件大小
   if (rawFile.size > maxSize) {
-    ElMessage.error('文件大小不能超过 50MB');
+    ElMessage.error(`文件大小不能超过 ${maxFileSizeInMB}MB`);
     return;
   }
 

@@ -3,7 +3,7 @@
     <div class="login-container">
       <div class="login-header">
         <h1 class="login-title">系统登录</h1>
-        <p class="login-subtitle">请输入管理员密码</p>
+        <p class="login-subtitle">请输入管理员账号和密码</p>
       </div>
 
       <el-form
@@ -13,6 +13,20 @@
         class="login-form"
         @submit.prevent="handleLogin"
       >
+        <el-form-item prop="username">
+          <el-input
+            v-model="loginForm.username"
+            type="text"
+            placeholder="请输入用户名"
+            :disabled="loading"
+            @keyup.enter="handleLogin"
+          >
+            <template #prefix>
+              <el-icon><User /></el-icon>
+            </template>
+          </el-input>
+        </el-form-item>
+
         <el-form-item prop="password">
           <el-input
             v-model="loginForm.password"
@@ -47,7 +61,7 @@
 import { ref, reactive } from 'vue';
 import { useRouter } from 'vue-router';
 import { ElMessage, type FormInstance, type FormRules } from 'element-plus';
-import { Lock } from '@element-plus/icons-vue';
+import { User, Lock } from '@element-plus/icons-vue';
 import { useAuthStore } from '../stores/auth';
 
 const router = useRouter();
@@ -57,10 +71,15 @@ const loginFormRef = ref<FormInstance>();
 const loading = ref(false);
 
 const loginForm = reactive({
+  username: '',
   password: '',
 });
 
 const loginRules: FormRules = {
+  username: [
+    { required: true, message: '请输入用户名', trigger: 'blur' },
+    { min: 2, message: '用户名长度不能少于2位', trigger: 'blur' },
+  ],
   password: [
     { required: true, message: '请输入密码', trigger: 'blur' },
     { min: 6, message: '密码长度不能少于6位', trigger: 'blur' },
@@ -74,7 +93,7 @@ const handleLogin = async () => {
     await loginFormRef.value.validate();
     loading.value = true;
 
-    await authStore.login(loginForm.password);
+    await authStore.login(loginForm.username, loginForm.password);
 
     ElMessage.success('登录成功');
     router.push('/admin');

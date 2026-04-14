@@ -4,6 +4,7 @@ import { authApi } from '../api/auth';
 
 export interface User {
   id: string;
+  username: string;
   name: string;
 }
 
@@ -13,12 +14,14 @@ export const useAuthStore = defineStore('auth', () => {
 
   const isAuthenticated = computed(() => !!token.value);
 
-  const login = async (password: string) => {
+  const login = async (username: string, password: string) => {
     try {
-      const response = await authApi.login(password);
-      token.value = response.data.token;
-      user.value = response.data.user;
-      localStorage.setItem('token', response.data.token);
+      const response = await authApi.login(username, password);
+      if (response.data) {
+        token.value = response.data.token;
+        user.value = response.data.user;
+        localStorage.setItem('token', response.data.token);
+      }
     } catch (error: any) {
       throw new Error(error.response?.data?.error || '登录失败');
     }
@@ -33,7 +36,9 @@ export const useAuthStore = defineStore('auth', () => {
   const verify = async () => {
     try {
       const response = await authApi.verify();
-      user.value = response.data.user;
+      if (response.data) {
+        user.value = response.data.user;
+      }
       return true;
     } catch (error) {
       logout();

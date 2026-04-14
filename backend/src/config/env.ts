@@ -24,7 +24,24 @@ const envSchema = z.object({
 
   // 认证配置
   JWT_SECRET: z.string(),
-  ADMIN_PASSWORD: z.string(),
+  // 管理员配置：JSON 格式的管理员数组
+  // 示例：'[{"username":"admin1","password":"$2a$10$..."},{"username":"admin2","password":"$2a$10$..."}]'
+  ADMIN_USERS: z.string().transform(v => {
+    try {
+      const users = JSON.parse(v);
+      if (!Array.isArray(users)) {
+        throw new Error('ADMIN_USERS must be an array');
+      }
+      return users.map((user: any) => ({
+        username: z.string().min(1).parse(user.username),
+        password: z.string().min(1).parse(user.password),
+        name: z.string().optional().default(user.username).parse(user.name),
+      }));
+    } catch (error) {
+      console.error('Invalid ADMIN_USERS format:', error);
+      throw new Error('ADMIN_USERS must be a valid JSON array');
+    }
+  }),
 });
 
 export type Env = z.infer<typeof envSchema>;

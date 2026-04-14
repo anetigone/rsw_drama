@@ -21,6 +21,8 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "test:coverage": "vitest run --coverage",
+    "admin:generate": "tsx scripts/generate-admin-config.ts",
+    "admin:add": "tsx scripts/add-admin.ts",
     "postinstall": "prisma generate"
   },
   "dependencies": {
