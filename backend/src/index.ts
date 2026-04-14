@@ -5,6 +5,7 @@ import { validateEnv } from './config/env';
 import { disconnectDatabase } from './config/database';
 import routes from './routes';
 import { errorHandler } from './middleware/error.handler';
+import { noCache } from './middleware/cache-control';
 import logger from './utils/logger';
 
 // 加载环境变量
@@ -36,7 +37,7 @@ app.get('/health', (req, res) => {
 });
 
 // API 路由
-app.use('/api', routes);
+app.use('/api', noCache, routes);
 
 // 错误处理中间件
 app.use(errorHandler);

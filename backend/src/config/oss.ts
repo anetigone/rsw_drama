@@ -14,6 +14,8 @@ export const ossClient = new OSS({
   bucket: env.OSS_BUCKET_NAME,
   // 启用V4签名(阿里云推荐)
   authorizationV4: true,
+  // 强制使用 HTTPS
+  secure: true,
 });
 
 // 导出配置信息

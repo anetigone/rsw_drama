@@ -60,27 +60,30 @@ class ApiClient {
   }
 
   async get<T>(endpoint: string, params?: Record<string, any>): Promise<ApiResponse<T>> {
-    let queryString = '';
+    // 添加时间戳参数来绕过 CDN 缓存
+    const timestamp = Date.now();
+    const urlParams = new URLSearchParams();
 
+    // 添加时间戳
+    urlParams.append('_', timestamp.toString());
+
+    // 添加其他有效参数
     if (params) {
-      // 过滤掉 undefined 和 null 的参数
-      const cleanParams = Object.entries(params).reduce((acc, [key, value]) => {
+      Object.entries(params).forEach(([key, value]) => {
         if (value !== undefined && value !== null && value !== '') {
-          acc[key] = value;
+          urlParams.append(key, String(value));
         }
-        return acc;
-      }, {} as Record<string, any>);
-
-      if (Object.keys(cleanParams).length > 0) {
-        queryString = '?' + new URLSearchParams(cleanParams).toString();
-      }
+      });
     }
+
+    const queryString = `?${urlParams.toString()}`;
 
     return this.request<T>(`${endpoint}${queryString}`, {
       method: 'GET',
       headers: {
-        'Cache-Control': 'no-cache',
+        'Cache-Control': 'no-store, no-cache, must-revalidate, private',
         'Pragma': 'no-cache',
+        'Expires': '0',
       },
     });
   }
