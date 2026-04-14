@@ -7,6 +7,7 @@ import LiteratureView from '../views/LiteratureView.vue'
 import LiteratureDetailView from '../views/LiteratureDetailView.vue'
 import AdminView from '../views/AdminView.vue'
 import LoginView from '../views/LoginView.vue'
+import UnderConstructionView from '../views/UnderConstructionView.vue'
 
 const routes = [
   {
@@ -66,6 +67,14 @@ const routes = [
     },
     name: 'Admin',
     component: AdminView
+  },
+  {
+    path: '/:pathMatch(.*)*',
+    meta: {
+      title: '页面开发中'
+    },
+    name: 'UnderConstruction',
+    component: UnderConstructionView
   }
 ]
 
@@ -75,7 +84,7 @@ const router = createRouter({
 })
 
 // 路由守卫
-router.beforeEach(async (to, from, next) => {
+router.beforeEach(async (to, _from, next) => {
   const authStore = useAuthStore()
 
   // 如果路由需要认证

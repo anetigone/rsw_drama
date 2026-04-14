@@ -41,6 +41,7 @@ export class UploadController {
       // 验证文件类型
       const allowedTypes = process.env.ALLOWED_FILE_TYPES?.split(',') || ['application/pdf', 'image/jpeg', 'image/jpg'];
       if (!allowedTypes.includes(contentType)) {
+        logger.warn(`Attempt to upload unsupported file type: ${contentType}`);
         return res.status(400).json({
           success: false,
           error: {

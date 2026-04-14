@@ -215,6 +215,7 @@ const loadCategories = async () => {
 
 const handleFileChange = async (file: UploadFile) => {
   const rawFile = file.raw;
+  console.log('选择的文件:', rawFile);
 
   if (!rawFile) {
     return;

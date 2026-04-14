@@ -188,12 +188,31 @@ export class LiteratureController {
     const { id } = paramsSchema.parse(req.params);
     const literature = await literatureService.deleteLiterature(id);
 
-    // 删除 OSS 文件
+    // 删除 OSS 文件（PDF）
     try {
       await ossService.deleteFile(literature.ossKey);
     } catch (error) {
       logger.error(`Failed to delete OSS file: ${literature.ossKey}`, error);
       // 即使删除 OSS 文件失败,也继续(数据库已删除)
+    }
+
+    // 删除封面图片
+    if (literature.imageUrl) {
+      try {
+        // 如果 imageUrl 是完整 URL，提取 OSS key
+        let coverOssKey = literature.imageUrl;
+        if (literature.imageUrl.startsWith('http')) {
+          // 从 URL 中提取 OSS key
+          const url = new URL(literature.imageUrl);
+          coverOssKey = url.pathname.slice(1); // 移除开头的 /
+        }
+
+        await ossService.deleteFile(coverOssKey);
+        logger.info(`Deleted cover image: ${coverOssKey}`);
+      } catch (error) {
+        logger.error(`Failed to delete cover image: ${literature.imageUrl}`, error);
+        // 即使删除封面失败,也继续(数据库和 PDF 已删除)
+      }
     }
 
     return res.json(successResponse(null, '文献删除成功'));

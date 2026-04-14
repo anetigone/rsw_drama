@@ -1,12 +1,10 @@
 import * as pdfjsLib from 'pdfjs-dist';
 
-// 配置 PDF.js worker - 使用本地 worker 文件
-// 动态导入 worker 避免构建问题
+// 配置 PDF.js worker - 使用 CDN 加载
+// 这样可以避免本地 worker 文件的 MIME 类型问题
 if (typeof window !== 'undefined') {
-  pdfjsLib.GlobalWorkerOptions.workerSrc = new URL(
-    'pdfjs-dist/build/pdf.worker.min.mjs',
-    import.meta.url
-  ).toString();
+  const version = pdfjsLib.version;
+  pdfjsLib.GlobalWorkerOptions.workerSrc = `https://cdn.jsdelivr.net/npm/pdfjs-dist@${version}/build/pdf.worker.min.mjs`;
 }
 
 /**
