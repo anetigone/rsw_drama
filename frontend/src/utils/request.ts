@@ -1,5 +1,6 @@
 // API 请求工具类
-const BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000/api';
+// 开发环境使用 .env 中的配置，生产环境使用相对路径
+const BASE_URL = import.meta.env.VITE_API_BASE_URL || '/api';
 
 interface ApiResponse<T = any> {
   success: boolean;

@@ -153,12 +153,12 @@ describe('Prisma CRUD Tests', () => {
           author: '汤显祖',
           year: 1598,
           description: '昆曲代表作',
-          category: '昆曲',
           ossKey: 'test/mudanting.pdf',
           fileName: 'mudanting.pdf',
           fileSize: 1024000,
           mimeType: 'application/pdf',
           totalPages: 200,
+          imageUrl: 'https://example.com/mudanting.jpg',
           categoryId: testCategoryId
         }
       });
@@ -181,13 +181,14 @@ describe('Prisma CRUD Tests', () => {
           fileName: 'simple.pdf',
           fileSize: 1024,
           mimeType: 'application/pdf',
+          imageUrl: 'https://example.com/simple.jpg',
           categoryId: testCategoryId
         }
       });
 
       expect(literature.description).toBeNull();
       expect(literature.totalPages).toBeNull();
-      expect(literature.categoryId).toBeNull();
+      expect(literature.categoryId).toBe(testCategoryId);
     });
 
     it('should read literature with category relation', async () => {
@@ -196,11 +197,11 @@ describe('Prisma CRUD Tests', () => {
           title: '[TEST] 关联测试',
           author: '测试',
           year: 2024,
-          category: '测试',
           ossKey: 'test/relation.pdf',
           fileName: 'relation.pdf',
           fileSize: 1024,
           mimeType: 'application/pdf',
+          imageUrl: 'https://example.com/relation.jpg',
           categoryId: testCategoryId
         }
       });
@@ -227,6 +228,7 @@ describe('Prisma CRUD Tests', () => {
           fileName: 'original.pdf',
           fileSize: 1000,
           mimeType: 'application/pdf',
+          imageUrl: 'https://example.com/original.jpg',
           categoryId: testCategoryId
         }
       });
@@ -255,6 +257,7 @@ describe('Prisma CRUD Tests', () => {
           fileName: 'counter.pdf',
           fileSize: 1024,
           mimeType: 'application/pdf',
+          imageUrl: 'https://example.com/counter.jpg',
           categoryId: testCategoryId
         }
       });
@@ -295,6 +298,7 @@ describe('Prisma CRUD Tests', () => {
           fileName: 'delete.pdf',
           fileSize: 1024,
           mimeType: 'application/pdf',
+          imageUrl: 'https://example.com/delete.jpg',
           categoryId: testCategoryId
         }
       });
@@ -317,47 +321,45 @@ describe('Prisma CRUD Tests', () => {
             title: '[TEST] 昆曲1',
             author: '作者A',
             year: 2000,
-            category: '昆曲',
             ossKey: 'test/k1.pdf',
             fileName: 'k1.pdf',
             fileSize: 1000,
             mimeType: 'application/pdf',
+            imageUrl: 'https://example.com/k1.jpg',
             categoryId: testCategoryId
           },
           {
             title: '[TEST] 京剧1',
             author: '作者B',
             year: 2001,
-            category: '京剧',
             ossKey: 'test/j1.pdf',
             fileName: 'j1.pdf',
             fileSize: 1000,
             mimeType: 'application/pdf',
+            imageUrl: 'https://example.com/j1.jpg',
             categoryId: testCategoryId
           },
           {
             title: '[TEST] 昆曲2',
             author: '作者A',
             year: 2002,
-            category: '昆曲',
             ossKey: 'test/k2.pdf',
             fileName: 'k2.pdf',
             fileSize: 1000,
             mimeType: 'application/pdf',
+            imageUrl: 'https://example.com/k2.jpg',
             categoryId: testCategoryId
           }
         ]
       });
 
-      // 按分类筛选 (需要通过 categoryRef 关联查询)
+      // 按分类筛选 (使用 categoryId)
       const kqResults = await prisma.literature.findMany({
         where: {
-          categoryRef: {
-            name: '昆曲'
-          }
+          categoryId: testCategoryId
         }
       });
-      expect(kqResults).toHaveLength(2);
+      expect(kqResults).toHaveLength(3);
 
       // 按作者筛选
       const authorResults = await prisma.literature.findMany({
@@ -370,9 +372,7 @@ describe('Prisma CRUD Tests', () => {
       // 组合筛选
       const combinedResults = await prisma.literature.findMany({
         where: {
-          categoryRef: {
-            name: '昆曲'
-          },
+          categoryId: testCategoryId,
           author: '作者A'
         }
       });
@@ -386,11 +386,11 @@ describe('Prisma CRUD Tests', () => {
           title: `[TEST] 文献${i + 1}`,
           author: `作者${i + 1}`,
           year: 2000 + i,
-          category: '测试',
           ossKey: `test/doc${i + 1}.pdf`,
           fileName: `doc${i + 1}.pdf`,
           fileSize: 1000,
           mimeType: 'application/pdf',
+          imageUrl: `https://example.com/doc${i + 1}.jpg`,
           categoryId: testCategoryId
         }))
       });
@@ -547,11 +547,11 @@ describe('Prisma CRUD Tests', () => {
             title: '[TEST] 事务测试文献',
             author: '测试作者',
             year: 2024,
-            category: '测试',
             ossKey: 'test/tx.pdf',
             fileName: 'tx.pdf',
             fileSize: 1024,
             mimeType: 'application/pdf',
+            imageUrl: 'https://example.com/tx.jpg',
             categoryId: category.id
           }
         });
@@ -620,11 +620,11 @@ describe('Prisma CRUD Tests', () => {
             title: '[TEST] 文献1',
             author: '作者A',
             year: 2000,
-            category: '昆曲',
             ossKey: 'test/a1.pdf',
             fileName: 'a1.pdf',
             fileSize: 1000,
             mimeType: 'application/pdf',
+            imageUrl: 'https://example.com/a1.jpg',
             viewCount: 10,
             downloadCount: 5,
             categoryId: testCategoryId
@@ -633,11 +633,11 @@ describe('Prisma CRUD Tests', () => {
             title: '[TEST] 文献2',
             author: '作者B',
             year: 2001,
-            category: '京剧',
             ossKey: 'test/a2.pdf',
             fileName: 'a2.pdf',
             fileSize: 2000,
             mimeType: 'application/pdf',
+            imageUrl: 'https://example.com/a2.jpg',
             viewCount: 20,
             downloadCount: 10,
             categoryId: testCategoryId
@@ -646,11 +646,11 @@ describe('Prisma CRUD Tests', () => {
             title: '[TEST] 文献3',
             author: '作者A',
             year: 2002,
-            category: '昆曲',
             ossKey: 'test/a3.pdf',
             fileName: 'a3.pdf',
             fileSize: 3000,
             mimeType: 'application/pdf',
+            imageUrl: 'https://example.com/a3.jpg',
             viewCount: 30,
             downloadCount: 15,
             categoryId: testCategoryId

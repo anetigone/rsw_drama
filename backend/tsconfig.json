@@ -4,7 +4,7 @@
     "module": "esnext",
     "lib": ["ES2022"],
     "outDir": "./dist",
-    "rootDir": ".",
+    "rootDir": "./src",
     "strict": true,
     "esModuleInterop": true,
     "skipLibCheck": true,
@@ -16,6 +16,6 @@
     "sourceMap": true,
     "types": ["node"]
   },
-  "include": ["src/**/*", "prisma.config.ts"],
-  "exclude": ["node_modules", "dist"]
+  "include": ["src/**/*"],
+  "exclude": ["node_modules", "dist", "prisma", "prisma.config.ts"]
 }

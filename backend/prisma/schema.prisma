@@ -1,6 +1,6 @@
 generator client {
   provider = "prisma-client"
-  output   = "../generated/prisma"
+  output   = "../src/generated"
 }
 
 datasource db {
@@ -8,20 +8,20 @@ datasource db {
 }
 
 model Literature {
-  id            String    @id @default(uuid())
+  id            String   @id @default(uuid())
   title         String
   author        String
   year          Int
   description   String?
-  ossKey        String    @unique
+  ossKey        String   @unique
   fileName      String
   fileSize      Int
   mimeType      String
   totalPages    Int?
-  uploadDate    DateTime  @default(now())
-  updateDate    DateTime  @updatedAt
-  viewCount     Int       @default(0)
-  downloadCount Int       @default(0)
+  uploadDate    DateTime @default(now())
+  updateDate    DateTime @updatedAt
+  viewCount     Int      @default(0)
+  downloadCount Int      @default(0)
   imageUrl      String
   categoryId    String
   categoryRef   Category @relation("CategoryLiteratures", fields: [categoryId], references: [id])

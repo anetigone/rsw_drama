@@ -83,7 +83,7 @@ async function testOssService() {
     console.log('=== 所有测试完成 ✓ ===');
 
   } catch (error) {
-    console.error('\n✗ 测试失败:', error.message);
+    console.error('\n✗ 测试失败:', error instanceof Error ? error.message : String(error));
     console.error('错误详情:', error);
     process.exit(1);
   }
