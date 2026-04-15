@@ -7,6 +7,8 @@ const ActivitiesView = () => import('../views/ActivitiesView.vue')
 const ActivityDetailView = () => import('../views/ActivityDetailView.vue')
 const LiteratureView = () => import('../views/LiteratureView.vue')
 const LiteratureDetailView = () => import('../views/LiteratureDetailView.vue')
+const TheoryView = () => import('../views/TheoryView.vue')
+const TheoryDetailView = () => import('../views/TheoryDetailView.vue')
 const AdminView = () => import('../views/AdminView.vue')
 const LoginView = () => import('../views/LoginView.vue')
 const UnderConstructionView = () => import('../views/UnderConstructionView.vue')
@@ -51,6 +53,22 @@ const routes = [
     },
     name: 'LiteratureDetail',
     component: LiteratureDetailView
+  },
+  {
+    path: '/theory',
+    meta: {
+      title: '文思集录'
+    },
+    name: 'Theory',
+    component: TheoryView
+  },
+  {
+    path: '/theory/:id',
+    meta: {
+      title: '理论详情'
+    },
+    name: 'TheoryDetail',
+    component: TheoryDetailView
   },
   {
     path: '/login',

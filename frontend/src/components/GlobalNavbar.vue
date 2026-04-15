@@ -132,7 +132,7 @@ const getIndexFromPath = (path: string): string => {
       return 'home'
     case '/literature':
       return 'classics'
-    case '/thoughts':
+    case '/theory':
       return 'thoughts'
     case '/activities':
       return 'activities'
@@ -144,6 +144,7 @@ const getIndexFromPath = (path: string): string => {
       // 处理动态路由，如 /activity/:id
       if (path.startsWith('/activity/')) return 'activities'
       if (path.startsWith('/literature/')) return 'classics'
+      if (path.startsWith('/theory/')) return 'thoughts'
       return 'home'
   }
 }
@@ -177,7 +178,7 @@ const navigateTo = (route: string) => {
       router.push('/literature')
       break
     case 'thoughts':
-      router.push('/thoughts')
+      router.push('/theory')
       break
     case 'activities':
       router.push('/activities')

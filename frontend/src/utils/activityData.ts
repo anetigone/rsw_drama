@@ -10,44 +10,20 @@ export type { Activity, ActivityDetail }
  */
 export const activities: Activity[] = [
   {
-    id: 1,
-    title: '《战友》',
-    date: '1941年11月',
-    description: '表现革命战士坚定信念和深厚友谊的经典剧作，展现了抗战时期革命者的精神风貌。',
-    image: '/images/activities/1.jpg',
-    contentPath: '/content/activities/activity_1.html'
-  },
-  {
-    id: 2,
-    title: '《回春之曲》',
-    date: '1942年3月',
-    description: '描写知识分子投身抗日救亡运动的感人故事，通过艺术形式传递爱国主义精神。',
-    image: '/images/activities/2.jpg',
-    contentPath: '/content/activities/activity_2.html'
-  },
-  {
-    id: 3,
-    title: '《放下你的鞭子》',
-    date: '1940年8月',
-    description: '抗战时期著名街头剧，由陈鲤庭根据田汉的独幕剧改编，激发了广大民众的爱国热情。',
-    image: '/images/activities/3.jpg',
-    contentPath: '/content/activities/activity_3.html'
-  },
-  {
-    id: 4,
-    title: '《屈原》',
-    date: '1942年4月',
-    description: '郭沫若的经典历史剧，借古讽今，表达了对国民党独裁统治的不满和对自由的向往。',
-    image: '/images/activities/4.jpg',
-    contentPath: '/content/activities/activity_4.html'
-  },
-  {
     id: 5,
-    title: '《新·西南剧展》',
-    date: '2026年3月',
-    description: '一个以西南剧展为背景的剧展，展示了西南剧展的历史、文化、社会等。',
-    image: '/images/activities/5.jpg',
+    title: '《新·西南剧展》进社区，新大众文艺实践活动在互鉴书院圆满举行',
+    date: '2026年3月29日',
+    description: '由四川大学文化产业研究中心指导，近都社区主办，互鉴书院承办的“青瓦・博士进社区”文化推广系列活动之“当好剧中人、做好剧作者、唱好中国戏”主题活动圆满落幕。',
+    image: '/images/activities/activity_5/1775649755132_25.jpg',
     contentPath: '/content/activities/activity_5.html'
+  },
+  {
+    id: 6,
+    title: '《新·西南剧展》话剧演出在文新演播厅顺利开展',
+    date: '2026年4月11日',
+    description: '2026年4月11日晚18:30，由四川大学哲学系、四川大学文学与新闻学院、四川大学雷雨话剧社联合出品的西南抗战话剧《新·西南剧展》，于四川大学江安校区文新演播厅圆满落幕。',
+    image: '/images/activities/activity_6/1776213033474_728.jpg',
+    contentPath: '/content/activities/activity_6.html'
   }
 ]
 
