@@ -42,6 +42,13 @@ const envSchema = z.object({
       throw new Error('ADMIN_USERS must be a valid JSON array');
     }
   }),
+
+  // 大模型 API 配置（可选）
+  LLM_BASE_URL: z.string().optional().default('https://api.deepseek.com/v1'),
+  LLM_API_KEY: z.string().optional(),
+  LLM_MODEL: z.string().optional().default('deepseek-chat'),
+  LLM_TEMPERATURE: z.string().optional().default('0.7').transform(v => Number(v)),
+  LLM_MAX_TOKENS: z.string().optional().default('4000').transform(v => Number(v)),
 });
 
 export type Env = z.infer<typeof envSchema>;

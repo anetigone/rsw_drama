@@ -7,6 +7,7 @@ export { uploadApi } from './upload';
 export { categoryApi } from './category';
 export { statisticsApi } from './statistics';
 export { authApi } from './auth';
+export { questionnaireApi } from './questionnaire';
 
 // 重新导出类型
 export type {

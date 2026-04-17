@@ -12,6 +12,8 @@ const TheoryDetailView = () => import('../views/TheoryDetailView.vue')
 const AdminView = () => import('../views/AdminView.vue')
 const LoginView = () => import('../views/LoginView.vue')
 const UnderConstructionView = () => import('../views/UnderConstructionView.vue')
+const QuestionnaireHomeView = () => import('../views/QuestionnaireHomeView.vue')
+const QuestionnaireView = () => import('../views/QuestionnaireView.vue')
 
 const routes = [
   {
@@ -87,6 +89,22 @@ const routes = [
     },
     name: 'Admin',
     component: AdminView
+  },
+  {
+    path: '/questionnaire',
+    meta: {
+      title: '问卷调查'
+    },
+    name: 'QuestionnaireHome',
+    component: QuestionnaireHomeView
+  },
+  {
+    path: '/questionnaire/fill',
+    meta: {
+      title: '填写问卷'
+    },
+    name: 'Questionnaire',
+    component: QuestionnaireView
   },
   {
     path: '/:pathMatch(.*)*',

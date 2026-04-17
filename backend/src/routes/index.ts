@@ -4,6 +4,7 @@ import uploadRoutes from './upload';
 import statisticsRoutes from './statistics';
 import categoryRoutes from './category';
 import authRoutes from './auth';
+import questionnaireRoutes from './questionnaire';
 
 const router = Router();
 
@@ -15,5 +16,6 @@ router.use('/literatures', literatureRoutes);
 router.use('/upload', uploadRoutes);
 router.use('/statistics', statisticsRoutes);
 router.use('/categories', categoryRoutes);
+router.use('/questionnaire', questionnaireRoutes);
 
 export default router;

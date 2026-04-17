@@ -1,0 +1,17 @@
+{
+  "name": "llm_calling",
+  "version": "1.0.0",
+  "description": "云函数：调用LLM分析问卷结果",
+  "main": "index.js",
+  "scripts": {
+    "test": "node test-local.js",
+    "test:stream": "node test-local.js"
+  },
+  "dependencies": {
+    "axios": "^1.6.0",
+    "dotenv": "^16.3.1"
+  },
+  "engines": {
+    "node": "18.x"
+  }
+}

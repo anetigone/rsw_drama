@@ -27,6 +27,7 @@
           <el-menu-item index="classics" @click="navigateTo('classics')">经典汇编</el-menu-item>
           <el-menu-item index="thoughts" @click="navigateTo('thoughts')">文思集录</el-menu-item>
           <el-menu-item index="activities" @click="navigateTo('activities')">活动纪实</el-menu-item>
+          <el-menu-item index="questionnaire" @click="navigateTo('questionnaire')">问卷调查</el-menu-item>
           <el-menu-item index="about" @click="navigateTo('about')">关于我们</el-menu-item>
         </el-menu>
       </div>
@@ -136,6 +137,10 @@ const getIndexFromPath = (path: string): string => {
       return 'thoughts'
     case '/activities':
       return 'activities'
+    case '/questionnaire':
+      return 'questionnaire'
+    case '/questionnaire/fill':
+      return 'questionnaire'
     case '/about':
       return 'about'
     case '/profile':
@@ -145,6 +150,7 @@ const getIndexFromPath = (path: string): string => {
       if (path.startsWith('/activity/')) return 'activities'
       if (path.startsWith('/literature/')) return 'classics'
       if (path.startsWith('/theory/')) return 'thoughts'
+      if (path.startsWith('/questionnaire')) return 'questionnaire'
       return 'home'
   }
 }
@@ -160,6 +166,7 @@ const mobileMenuItems = [
   { key: 'classics', label: '经典汇编' },
   { key: 'thoughts', label: '文思集录' },
   { key: 'activities', label: '活动纪实' },
+  { key: 'questionnaire', label: '问卷调查' },
   { key: 'about', label: '关于我们' },
   { key: 'profile', label: '个人中心' }
 ]
@@ -182,6 +189,9 @@ const navigateTo = (route: string) => {
       break
     case 'activities':
       router.push('/activities')
+      break
+    case 'questionnaire':
+      router.push('/questionnaire')
       break
     case 'about':
       router.push('/about')
